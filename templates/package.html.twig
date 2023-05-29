@@ -1,0 +1,53 @@
+{% extends '@OctopusPress/base.html.twig' %}
+
+{% block body %}
+    <section class="w-full bg-white">
+        <div class="container mx-auto py-10">
+            <div class="w-full">
+                <form class="max-w-lg mx-auto" action="" method="get">
+                    <label>
+                        <input name="keyword" class="input primary w-full" />
+                    </label>
+                </form>
+            </div>
+        </div>
+    </section>
+    <section class="w-full">
+        <div class="container mx-auto">
+            <div class="w-full px-6 py-8">
+                <div class="flex w-full flex-col lg:flex-row">
+                    <div class="grow lg:mr-4">
+                        <ul class="flex flex-col">
+                            {% for package in packages %}
+                            <li class="px-3.5 py-4 bg-white rounded-lg">
+                                <div class="flex justify-between">
+                                    <div class="grow">
+                                        <h2 class="text-primary font-bold">{{ package.title }}</h2>
+                                        <p class="py-2">
+                                            {{ package.content }}
+                                        </p>
+                                    </div>
+                                    <div class="w-2/12">
+                                        <p>
+                                            <span class="flex">
+                                                <i><svg xmlns="http://www.w3.org/2000/svg" class="fill-slate-800 w-6" viewBox="0 0 24 24"><g data-name="Layer 2"><g data-name="arrow-circle-down"><rect width="24" height="24" opacity="0"/><path d="M14.31 12.41L13 13.66V8a1 1 0 0 0-2 0v5.59l-1.29-1.3a1 1 0 0 0-1.42 1.42l3 3a1 1 0 0 0 .33.21.94.94 0 0 0 .76 0 .54.54 0 0 0 .16-.1.49.49 0 0 0 .15-.1l3-2.86a1 1 0 0 0-1.38-1.45z"/><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/></g></g></svg></i>
+                                                <i class="ml-1">{{ package.getMetaValue('download', 0) }}</i>
+                                            </span>
+                                            <span class="flex">
+                                                <i><svg xmlns="http://www.w3.org/2000/svg" class="fill-slate-800 w-6" viewBox="0 0 24 24"><g data-name="Layer 2"><g data-name="star"><rect width="24" height="24" transform="rotate(90 12 12)" opacity="0"/><path d="M17.56 21a1 1 0 0 1-.46-.11L12 18.22l-5.1 2.67a1 1 0 0 1-1.45-1.06l1-5.63-4.12-4a1 1 0 0 1-.25-1 1 1 0 0 1 .81-.68l5.7-.83 2.51-5.13a1 1 0 0 1 1.8 0l2.54 5.12 5.7.83a1 1 0 0 1 .81.68 1 1 0 0 1-.25 1l-4.12 4 1 5.63a1 1 0 0 1-.4 1 1 1 0 0 1-.62.18zM12 16.1a.92.92 0 0 1 .46.11l3.77 2-.72-4.21a1 1 0 0 1 .29-.89l3-2.93-4.2-.62a1 1 0 0 1-.71-.56L12 5.25 10.11 9a1 1 0 0 1-.75.54l-4.2.62 3 2.93a1 1 0 0 1 .29.89l-.72 4.16 3.77-2a.92.92 0 0 1 .5-.04z"/></g></g></svg></i>
+                                                <i class="ml-1">{{ package.getMetaValue('star', 0) }}</i>
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="w-full mt-4 lg:mt-0 lg:max-w-sm lg:w-96 bg-white">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

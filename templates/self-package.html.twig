@@ -1,0 +1,183 @@
+{% extends '@OctopusPress/base.html.twig' %}
+{% block body %}
+    <div class="w-full">
+        <div class="container mx-auto px-4">
+            {% for message in app.flashes('error') %}
+                <div class="bg-danger rounded-lg text-white text-center my-4 py-3">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('success') %}
+                <div class="bg-success rounded-lg text-white text-center my-4 py-3">{{ message }}</div>
+            {% endfor %}
+            <div class="w-full py-20">
+                <div class="w-full rounded-lg bg-white min-h-64 py-10">
+                    <div class="flex flex-col h-full items-center justify-center w-full lg:w-1/2 mx-auto">
+                        <form id="submitPackage" method="post" action="/package/submit" class="w-full px-8 hidden">
+                            <input type="hidden" id="filename" name="filename" value=""/>
+                            <div class="form-group md:items-center justify-center">
+                                <label class="label w-1/4" for="type">类型</label>
+                                <input id="type" class="input border-0 w-full" disabled value=""/>
+                            </div>
+                            <div class="form-group md:items-center justify-center">
+                                <label class="label w-1/4" for="packageName">包名</label>
+                                <input id="packageName" class="input border-0 w-full" disabled value=""/>
+                            </div>
+                            <div class="form-group md:items-center justify-center">
+                                <label class="label w-1/4" for="name">名称</label>
+                                <input id="name" class="input border-0 w-full" disabled value=""/>
+                            </div>
+
+                            <div class="form-group md:items-center justify-center">
+                                <label class="label w-1/4" for="description">描述</label>
+                                <input id="description" class="input border-0 w-full" disabled value=""/>
+                            </div>
+                            <div class="form-group md:items-center justify-center">
+                                <label class="label w-1/4" for="keywords">关键词</label>
+                                <input id="keywords" class="input border-0 w-full" disabled value=""/>
+                            </div>
+                            <div class="form-group md:items-center justify-center">
+                                <label class="label w-1/4" for="entrypoint">入口点</label>
+                                <input id="entrypoint" class="input border-0 w-full" disabled value=""/>
+                            </div>
+                            <div class="form-group md:items-center justify-center">
+                                <label class="label w-1/4" for="version">版本</label>
+                                <input id="version" class="input border-0 w-full" disabled value=""/>
+                            </div>
+                            <div class="form-group md:items-center justify-center">
+                                <label class="label w-1/4" for="miniOP">OP最小版本</label>
+                                <input id="miniOP" class="input border-0 w-full" disabled value=""/>
+                            </div>
+                            <div class="form-group md:items-center justify-center">
+                                <label class="label w-1/4" for="miniPHP">PHP最小版本</label>
+                                <input id="miniPHP" class="input border-0 w-full" disabled value=""/>
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <button id="cancelSubmit" type="button" class="btn danger medium mx-2">取消</button>
+                                <button type="submit" class="btn primary medium mx-2">提交</button>
+                            </div>
+                        </form>
+                        <form id="uploadForm" method="post" enctype="multipart/form-data" class="relative" action="/package/upload">
+                            <input type="file" id="packageInput" name="file" class="invisible absolute z-40 left-0 top-[10px] w-[156px]"/>
+                            <p class="py-4 font-semibold text-lg hidden" id="fileContainer"></p>
+                            <div class="relative">
+                                <div class="flex items-center btn primary medium rounded-full font-bold"
+                                     onclick="document.getElementById('packageInput').click();">
+                                    <svg class="w-6 fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <g data-name="Layer 2">
+                                            <g data-name="plus">
+                                                <rect width="24" height="24" transform="rotate(180 12 12)" opacity="0"/>
+                                                <path
+                                                    d="M19 11h-6V5a1 1 0 0 0-2 0v6H5a1 1 0 0 0 0 2h6v6a1 1 0 0 0 2 0v-6h6a1 1 0 0 0 0-2z"/>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                    上传包文件
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="mt-10">
+                    <ul class="grid lg:grid-cols-2 gap-8">
+                        {% for package in packages %}
+                        <li class="overflow-hidden rounded-lg bg-white relative">
+                            <div class="flex justify-start">
+                                <div class="">
+                                    <img class="object-cover h-auto w-48 rounded-l-lg max-h-64" src="" alt="">
+                                </div>
+                                <div class="flex flex-col justify-between ml-4 pr-3">
+                                    <div class="py-2 flex justify-between items-center">
+                                        <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                                            {{ package.title }}
+                                        </h2>
+                                        <div class="flex">
+                                            {% set type = package.getType() %}
+                                            <span class="px-2 {% if type == 'theme' %} bg-indigo-500 {% else %}bg-success{% endif %} font-bold text-white rounded-md mr-2">
+                                                {{ type == 'theme' ? '主题' : '插件' }}
+                                            </span>
+                                            <span class="px-2 bg-success font-bold text-white rounded-md">
+                                                v{{ package.getMetaValue('version') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="mb-3 font-normal text-slate-600">{{ package.content }}</p>
+                                        <p class="mb-4 flex flex-wrap">
+                                            {% set tags = package.getTags() %}
+                                            {% for tag in tags %}
+                                                <a class="px-2 py-1 bg-danger rounded-full text-white mr-2 mb-2">{{ tag.getName() }}</a>
+                                            {% endfor %}
+                                        </p>
+                                        <p  class="text-right mb-2 text-slate-500">
+                                            最近更新:
+                                            <time>{{ package.getModifiedAt()|date('Y/m/d') }}</time>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    {{ parent() }}
+    <script type="text/javascript">
+        var uploadForm = document.getElementById('uploadForm');
+        var submitPackage = document.querySelector('#submitPackage');
+        var fileContainer = document.getElementById('fileContainer');
+        document.getElementById('cancelSubmit').addEventListener('click', function (event) {
+            uploadForm.classList.remove('hidden');
+            submitPackage.classList.add('hidden');
+            uploadForm.reset();
+        });
+        window.formToFetchTransFormer(uploadForm, function (body) {
+            if (body.message) {
+                alert(body.message);
+            }
+            if (body.packageName) {
+                uploadForm.classList.add('hidden');
+                submitPackage.classList.remove('hidden');
+                for (const key in body) {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        let value = body[key];
+                        if (key === 'packageName' && body['organize']) {
+                            value = body['organize'] + '/' + value;
+                        }
+                        element.value = typeof value === 'string'
+                            ? value : (Array.isArray(value) ? value.join(',') : JSON.stringify(value));
+                    }
+                }
+            }
+        });
+        document.getElementById('packageInput').addEventListener('change', function (event) {
+            /**
+             *
+             * @type {HTMLInputElement}
+             */
+            const file = event.target;
+            const files = file.files;
+            let name = '';
+            if (files.length > 0) {
+                fileContainer.innerText = files.item(0).name;
+                name = files.item(0).name;
+                fileContainer.classList.remove('hidden');
+            } else {
+                fileContainer.innerText = '';
+                fileContainer.classList.add('hidden');
+            }
+            if (name) {
+                if (!name.endsWith('zip')) {
+                    alert('只能上传ZIP包...');
+                    return;
+                }
+                setTimeout(function () {
+                    uploadForm.dispatchEvent(new CustomEvent('submit'));
+                }, 0);
+            }
+        });
+    </script>
+{% endblock %}

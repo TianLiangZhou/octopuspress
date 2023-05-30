@@ -46,14 +46,24 @@ class PackageController extends Controller
     #[Route('/package/{type}.{_format}', requirements: ['type' => '(theme|plugin)', '_format' => '(json)'], defaults: ['_format' => 'html'], methods: ['GET'])]
     public function packages(string $type, Request $request): Response
     {
+        $names = $request->query->get('names', []);
+        if (is_string($names) && $names) {
+            $names = [$names];
+        }
         /**
          * @var $runtime OctopusRuntime
          */
         $runtime = $this->bridger->getTwig()->getRuntime(OctopusRuntime::class);
-        $packages = $runtime->getPosts([
+        $condition = [
             'type' => $type,
             'status' => Post::STATUS_PUBLISHED,
-        ]);
+        ];
+        foreach ($names as $name) {
+            if (is_string($name)) {
+                $condition['name'][] = $name;
+            }
+        }
+        $packages = $runtime->getPosts($condition);
         $assets = $this->bridger->getPackages();
         $registeredMetaKeys = $this->bridger->getMeta()->getPostType($type);
         $keys = [];

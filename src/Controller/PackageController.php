@@ -47,7 +47,7 @@ class PackageController extends Controller
     public function packages(string $type, Request $request): Response
     {
         try {
-            $names = $request->query->all('names');
+            $names = $request->query->all('name');
         } catch (\Throwable $exception) {
             $names = [];
         }

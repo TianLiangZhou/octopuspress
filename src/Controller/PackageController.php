@@ -46,9 +46,10 @@ class PackageController extends Controller
     #[Route('/package/{type}.{_format}', requirements: ['type' => '(theme|plugin)', '_format' => '(json)'], defaults: ['_format' => 'html'], methods: ['GET'])]
     public function packages(string $type, Request $request): Response
     {
-        $names = $request->query->get('names', []);
-        if (is_string($names) && $names) {
-            $names = [$names];
+        try {
+            $names = $request->query->all('names');
+        } catch (\Throwable $exception) {
+            $names = [];
         }
         /**
          * @var $runtime OctopusRuntime

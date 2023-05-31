@@ -305,11 +305,7 @@ class PackageController extends Controller
         }
         $version = $package->getMetaValue('version');
         if ($version) {
-            $versionCompare = version_compare($packageInfo['version'], $version);
-            if ($versionCompare === 1) {
-                throw new \InvalidArgumentException('无需重复提交相同版本的包.');
-            }
-            if ($versionCompare === -1) {
+            if (version_compare($packageInfo['version'], $version, '<=')) {
                 throw new \InvalidArgumentException('提交的版本小于已存在的版本.');
             }
         }

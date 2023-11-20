@@ -1,18 +1,26 @@
 <?php
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler;
 use Symfony\Config\FrameworkConfig;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 return static function (FrameworkConfig $frameworkConfig,  ContainerConfigurator $container) {
-
+    $frameworkConfig->enabledLocales(['en']);
     $sessionConfig = $frameworkConfig->secret(env('APP_SECRET'))
         ->httpMethodOverride(false)
         ->session();
     $sessionConfig->handlerId(null)
-            ->cookieSecure('auto')
-            ->cookieSamesite('lax')
-            ->storageFactoryId('session.storage.factory.native');
+                ->name(env('SESSION_NAME'))
+                ->cookieLifetime(3600)
+                ->cookieHttponly(true)
+                ->cookieSecure('auto')
+                ->cookieSamesite('lax');
+    if (($_ENV['SESSION_DRIVER'] ?? '') === 'redis') {
+        $sessionConfig->handlerId(RedisSessionHandler::class);
+    } else {
+        $sessionConfig->storageFactoryId('session.storage.factory.native');
+    }
 
     $frameworkConfig->phpErrors()
         ->log();

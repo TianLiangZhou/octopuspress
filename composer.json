@@ -44,7 +44,8 @@
         "symfony/security-csrf": "6.3.*",
         "symfony/twig-bundle": "6.3.*",
         "symfony/validator": "6.3.*",
-        "symfony/yaml": "6.3.*"
+        "symfony/yaml": "6.3.*",
+        "ext-redis": "*"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.13.0",

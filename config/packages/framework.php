@@ -23,7 +23,7 @@ return static function (FrameworkConfig $frameworkConfig,  ContainerConfigurator
     }
 
     $frameworkConfig->phpErrors()
-        ->log();
+        ->log(true);
 
     $frameworkConfig->csrfProtection()
         ->enabled(true);

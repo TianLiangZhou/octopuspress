@@ -248,7 +248,7 @@ class PackageController extends Controller
         }
         try {
             $packageInfo = $this->pluginManager->getPackageInfo($zipFile);
-            $package = $this->save($user, $packageInfo, $zipFile);
+            $package = $this->save($request, $user, $packageInfo, $zipFile);
             $this->addFlash('success', '提交成功！' . $package->getTitle());
         } catch (\Throwable $exception) {
             unlink($zipFile);
@@ -290,7 +290,7 @@ class PackageController extends Controller
      * @throws CommonMarkException
      * @throws \Throwable
      */
-    private function save(User $user, array $packageInfo, string $zipFile): Post
+    private function save(Request $request, User $user, array $packageInfo, string $zipFile): Post
     {
         $postRepository = $this->bridger->getPostRepository();
         $taxonomyRepository = $this->bridger->getTaxonomyRepository();
@@ -405,7 +405,7 @@ class PackageController extends Controller
             ],
         ];
         $postController = $this->bridger->get(PostController::class);
-        $postController->save($data, $package, $user);
+        $postController->save($request, $package, $user, $data);
         $o = substr(md5($name . $_SERVER['APP_SECRET']), 0, 8);
         $packagePath = $assetDir . DIRECTORY_SEPARATOR . 'upload/files/'.$type.'/' . $o . '/'. $name;
         if (!file_exists($packagePath)) {
